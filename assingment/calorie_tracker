@@ -1,0 +1,93 @@
+# Name: Daksh Gautam
+# Date: October 30, 2025
+# Daily Calorie Tracker CLI
+
+import datetime  # We use datetime to add a timestamp if we save the log
+
+print("WELCOME TO DAILY CALORIE TRACKER\n")
+
+# Lists to store meal names and their calorie amounts
+meal_names = []
+calorie_amounts = []
+
+# Ask user for the number of meals they want to log
+num_meals = input("How many meals today? ")
+while not num_meals.isdigit() or int(num_meals) < 1:
+    num_meals = input("Enter a positive number of meals: ")
+num_meals = int(num_meals)
+
+# Collect the meal names and calorie amounts from the user
+for i in range(num_meals):
+    print("\nMeal", i+1)
+    meal = input("Name: ")
+    
+    # Ask for calorie amount for this meal and make sure it's a positive number
+    cal = input("Calories for " + meal + ": ")
+    while not cal.replace(".", "", 1).isdigit() or float(cal) < 0:
+        cal = input("Enter valid calories for " + meal + ": ")
+    
+    # Store the meal name and calorie amount in the lists
+    meal_names.append(meal)
+    calorie_amounts.append(float(cal))
+
+# Calculate the total calories consumed
+total = 0
+for c in calorie_amounts:
+    total += c  # Add each meal's calories to total
+
+# Calculate the average calories per meal
+average = total / len(calorie_amounts)
+
+# Ask user for their daily calorie limit and validate input
+limit = input("\nDaily calorie limit: ")
+while not limit.replace(".", "", 1).isdigit() or float(limit) < 0:
+    limit = input("Enter valid limit: ")
+limit = float(limit)
+
+# Compare total calories with the daily limit to determine status
+if total > limit:
+    status = "EXCEEDED by " + str(total - limit)
+else:
+    status = "Within limit. Remaining: " + str(limit - total)
+
+# Print the meal summary in a simple table using tabs
+print("\nMEAL SUMMARY")
+print("Meal Name\t\tCalories")
+print("-------------------------------")
+for i in range(len(meal_names)):
+    print(meal_names[i] + "\t\t" + str(calorie_amounts[i]))
+print("-------------------------------")
+print("Total\t\t" + str(total))
+print("Average\t\t" + str(round(average, 2)))
+print("Daily Limit\t" + str(limit))
+print("Status\t\t" + status)
+
+# Ask if the user wants to save the session log
+save = input("\nSave session? (yes/no): ").lower()
+if save == "yes":
+    f = open("calorie_log.txt", "w")  # Open a file to write the log
+    
+    # Write basic information and timestamp
+    f.write("Calorie Tracker Log\n")
+    f.write("Timestamp: " + str(datetime.datetime.now()) + "\n\n")
+    
+    # Write the meal details
+    f.write("Meal Name\tCalories\n")
+    f.write("-----------------------\n")
+    for i in range(len(meal_names)):
+        f.write(meal_names[i] + "\t" + str(calorie_amounts[i]) + "\n")
+    
+    # Write total, average, limit, and status
+    f.write("-----------------------\n")
+    f.write("Total\t" + str(total) + "\n")
+    f.write("Average\t" + str(round(average, 2)) + "\n")
+    f.write("Daily Limit\t" + str(limit) + "\n")
+    f.write("Status\t" + status + "\n")
+    f.write("End of log\n")
+    
+    f.close()  # Close the file after writing
+    print("Saved to calorie_log.txt")
+else:
+    print("Session not saved.")
+
+print("\nThank you for using the tracker!")
